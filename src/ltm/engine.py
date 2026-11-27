@@ -429,13 +429,13 @@ class TaskEngine:
             return
         self._all_done_announced = True
         self._tracker.reset()
-        log.info("🎉 all tasks completed")
+        log.info("all tasks completed")
         self._emit("all_tasks_completed", {"total": len(self._tasks)})
 
     async def mark_completed(
         self, task_id: str | None = None, reason: str = "manual"
     ) -> None:
-        """Manually complete a task (dashboard button / operator override)."""
+        """Operator/API override; normal task completion is automatic."""
         async with self._analysis_lock:
             task = None
             if task_id:
@@ -611,8 +611,7 @@ class TaskEngine:
         if next_task is not None:
             self._all_done_announced = False
             log.info(
-                '✅ TASK COMPLETED: "%s"  →  next task: "%s"  (%d/%d done)',
-                task.title,
+                "Task completed, next task is : %s (%d/%d done)",
                 next_task.title,
                 progress["completed"],
                 progress["total"],
@@ -622,10 +621,7 @@ class TaskEngine:
                 {"task": next_task.model_dump(mode="json"), "progress": progress},
             )
         else:
-            log.info(
-                '✅ TASK COMPLETED: "%s"  →  no tasks remaining',
-                task.title,
-            )
+            log.info("Task completed, next task is : no tasks remaining")
             self._announce_all_done()
 
         if frames and self._config.analysis.save_evidence:

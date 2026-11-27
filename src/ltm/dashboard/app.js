@@ -334,9 +334,7 @@ function renderVotes(state) {
 }
 
 function renderButtons(state) {
-  const hasTask = Boolean(state.current_task);
-  $("#btn-analyze").disabled = !hasTask;
-  $("#btn-complete").disabled = !hasTask;
+  $("#btn-analyze").disabled = !Boolean(state.current_task);
 }
 
 function renderConfigErrors(errors) {
@@ -487,6 +485,17 @@ function renderAnalysis(state) {
 }
 
 /* ----------------------------------------------------------------- events */
+function nextTaskLabel(task) {
+  return task ? task.title : "no tasks remaining";
+}
+
+function setCompletionStatus(message) {
+  const box = document.querySelector("#completion-status");
+  if (!box) return;
+  box.textContent = message;
+  box.classList.remove("hidden");
+}
+
 function eventText(event) {
   const data = event.data || {};
   switch (event.type) {
@@ -498,10 +507,10 @@ function eventText(event) {
         (verdict.reasoning || "").slice(0, 120)
       )}`;
     }
-    case "task_completed":
-      return `✅ <strong>Task completed:</strong> ${esc(data.task && data.task.title)}${
-        data.next_task ? ` → next: <strong>${esc(data.next_task.title)}</strong>` : " → no tasks remaining"
-      }`;
+    case "task_completed": {
+      const next = nextTaskLabel(data.next_task);
+      return `<strong>Task completed, next task is : ${esc(next)}</strong>`;
+    }
     case "task_activated":
       return `▶ Now active: <strong>${esc(data.task && data.task.title)}</strong>`;
     case "project_changed":
@@ -546,11 +555,9 @@ function addEvent(event) {
 
   if (event.type === "task_completed") {
     const data = event.data || {};
-    toast(
-      data.next_task
-        ? `Task completed: ${data.task.title} → next: ${data.next_task.title}`
-        : `Task completed: ${data.task.title} — all tasks done`
-    );
+    const message = `Task completed, next task is : ${nextTaskLabel(data.next_task)}`;
+    setCompletionStatus(message);
+    toast(message);
   }
 
   if (
@@ -668,19 +675,6 @@ $("#btn-refresh").addEventListener("click", async () => {
     await api("/api/tasks/refresh", { method: "POST" });
     await refreshState();
     toast("Task list refreshed.");
-  } catch (error) {
-    toast(error.message, true);
-  }
-});
-
-$("#btn-complete").addEventListener("click", async () => {
-  if (!appState || !appState.current_task) return;
-  if (!confirm(`Mark "${appState.current_task.title}" as completed?`)) return;
-  try {
-    await api(`/api/tasks/${encodeURIComponent(appState.current_task.id)}/complete`, {
-      method: "POST",
-    });
-    await refreshState();
   } catch (error) {
     toast(error.message, true);
   }

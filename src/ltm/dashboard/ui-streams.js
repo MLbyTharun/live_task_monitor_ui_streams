@@ -127,4 +127,38 @@ for (const id of ["#cam1", "#cam2"]) {
   video.play().catch(() => {});
 }
 
+/* Automatic completion notifications (no manual "completed" button). */
+let completionEvents = null;
+
+function nextTaskLabel(task) {
+  return task ? task.title : "no tasks remaining";
+}
+
+function showCompletion(message) {
+  const box = $("#completion-status");
+  if (!box) return;
+  box.textContent = message;
+  box.classList.remove("hidden");
+}
+
+function connectCompletionEvents() {
+  completionEvents = new EventSource("/api/events");
+  completionEvents.onmessage = (message) => {
+    try {
+      const event = JSON.parse(message.data);
+      const data = event.data || {};
+      if (event.type === "task_completed") {
+        showCompletion(`Task completed, next task is : ${nextTaskLabel(data.next_task)}`);
+      } else if (event.type === "all_tasks_completed") {
+        showCompletion("Task completed, next task is : no tasks remaining");
+      }
+    } catch (_) { /* ignore non-JSON events */ }
+  };
+}
+
+window.addEventListener("beforeunload", () => {
+  if (completionEvents) completionEvents.close();
+});
+
 startStreamCapture();
+connectCompletionEvents();

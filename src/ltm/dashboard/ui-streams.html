@@ -24,6 +24,7 @@
     label { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12.5px; }
     input[type="password"] { border:1px solid var(--line); border-radius:9px; padding:8px 10px; background:#10131a; color:var(--text); }
     .note { color:var(--muted); font-size:12.5px; line-height:1.5; margin:0; }
+    .completion-status { border-color:rgba(62,207,142,.35); background:rgba(62,207,142,.12); color:#bff0d9; }
     code { color:#b9c8e8; }
     .hidden { display:none !important; }
   </style>
@@ -38,6 +39,8 @@
       <label>Ingest token <input id="ingest-token" type="password" placeholder="optional" autocomplete="off" /></label>
       <a class="note" href="/" style="color:#b9c8e8;">Main dashboard →</a>
     </div>
+
+    <div class="bar completion-status hidden" id="completion-status" role="status" aria-live="polite"></div>
 
     <p class="note">
       No RTSP. The two players below are served by this app. This page pushes JPEG screenshots to

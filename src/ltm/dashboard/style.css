@@ -241,6 +241,17 @@ input:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 
+.completion-status {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(62, 207, 142, 0.35);
+  background: rgba(62, 207, 142, 0.12);
+  color: #bff0d9;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 button {
   appearance: none;
   border: 1px solid transparent;

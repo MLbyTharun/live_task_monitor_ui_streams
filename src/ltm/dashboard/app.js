@@ -70,7 +70,6 @@ function render() {
   renderStreams(state.streams);
   renderAnalysis(state);
   renderConfigErrors(state.config_errors);
-  renderButtons(state);
 }
 
 /* ---------------------------------------------------------------- project */
@@ -331,10 +330,6 @@ function renderVotes(state) {
   ).join("");
   $("#vote-text").textContent =
     `${filled}/${total} · min confidence ${Math.round((state.min_confidence || 0) * 100)}%`;
-}
-
-function renderButtons(state) {
-  $("#btn-analyze").disabled = !Boolean(state.current_task);
 }
 
 function renderConfigErrors(errors) {
@@ -655,21 +650,6 @@ function stopCamera(streamId) {
 }
 
 /* ------------------------------------------------------------------ wiring */
-$("#btn-analyze").addEventListener("click", async () => {
-  const button = $("#btn-analyze");
-  button.disabled = true;
-  button.textContent = "Analysing…";
-  try {
-    await api("/api/analyze", { method: "POST" });
-    await refreshState();
-  } catch (error) {
-    toast(error.message, true);
-  } finally {
-    button.textContent = "Analyze now";
-    button.disabled = !(appState && appState.current_task);
-  }
-});
-
 $("#btn-refresh").addEventListener("click", async () => {
   try {
     await api("/api/tasks/refresh", { method: "POST" });

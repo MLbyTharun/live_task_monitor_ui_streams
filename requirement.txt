@@ -1,0 +1,100 @@
+# Live Task Monitor — detailed runtime requirements
+# =================================================
+#
+# Project name: live-task-monitor
+# Python:      >= 3.11 (3.12/3.13 also work; use a virtual environment)
+# Platforms:   Linux, macOS, Windows, containers. No GPU is required for the
+#              app itself. CPU-only devices are supported. A vision model must
+#              be reachable separately (local server or hosted API).
+#
+# Install inside a virtual environment:
+#
+#   Linux / macOS:
+#     python3 -m venv .venv
+#     source .venv/bin/activate
+#     python -m pip install --upgrade pip
+#     python -m pip install -r requirement.txt
+#     python -m pip install -e .
+#
+#   Windows PowerShell:
+#     python -m venv .venv
+#     .\.venv\Scripts\Activate.ps1
+#     python -m pip install --upgrade pip
+#     python -m pip install -r requirement.txt
+#     python -m pip install -e .
+#
+#   Windows Command Prompt:
+#     python -m venv .venv
+#     .venv\Scripts\activate.bat
+#     python -m pip install --upgrade pip
+#     python -m pip install -r requirement.txt
+#     python -m pip install -e .
+#
+# `pip` installs transitive dependencies automatically. The project's
+# pyproject.toml also declares the same runtime dependencies, so
+# `python -m pip install -e .` is sufficient after installing Python; this file
+# exists to make the requirement set explicit and reproducible on any device.
+#
+# Do NOT install `opencv-python` instead of `opencv-python-headless` unless you
+# need OpenCV GUI windows. This app only reads frames and does not open windows.
+# On systems without a prebuilt OpenCV wheel, see "Any device" notes in
+# Readme.md (build tools, FFmpeg, or use Docker).
+
+# ---------------------------------------------------------------------------
+# Build backend for `python -m pip install -e .`
+# ---------------------------------------------------------------------------
+setuptools>=68
+wheel>=0.41
+
+# ---------------------------------------------------------------------------
+# Web API + server (dashboard + SSE + push ingest)
+# ---------------------------------------------------------------------------
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.32,<1.0
+# `uvicorn[standard]` adds: httptools, uvloop (non-Windows), watchfiles,
+# websockets, PyYAML, python-dotenv. No extra packages are needed manually.
+starlette>=0.38,<2.0
+
+# ---------------------------------------------------------------------------
+# HTTP client for HyperReality authoring API + OpenAI-compatible VLM servers
+# ---------------------------------------------------------------------------
+httpx>=0.28,<1.0
+
+# ---------------------------------------------------------------------------
+# Data validation + config
+# ---------------------------------------------------------------------------
+pydantic>=2.9,<3.0
+pydantic-core>=2.18,<3.0
+PyYAML>=6.0,<7.0
+python-dotenv>=1.0,<2.0
+
+# ---------------------------------------------------------------------------
+# Camera / frame processing
+# ---------------------------------------------------------------------------
+# `opencv-python-headless` decodes RTSP/HLS/files/webcam, reads/writes JPEG,
+# and resizes frames. It bundles FFmpeg on common platforms; no separate
+# system FFmpeg install is required for normal use. Keep `<6` to avoid an
+# unreviewed next major.
+opencv-python-headless>=4.10,<6.0
+
+# OpenCV uses NumPy for frame buffers. `ltm` also uses it for push JPEG
+# decoding. Pin below 3 to avoid an unreviewed next major; pip picks a version
+# compatible with your Python and OpenCV.
+numpy>=1.23,<3.0
+
+# ---------------------------------------------------------------------------
+# Runtime conveniences pulled in transitively; listed for clarity
+# ---------------------------------------------------------------------------
+anyio>=4.0,<5.0
+idna>=3.4
+certifi>=2024.0.0
+sniffio>=1.3.0
+typing-extensions>=4.8.0
+
+# ---------------------------------------------------------------------------
+# Optional: tests + linting. Not needed to run the app.
+# For full dev setup you can instead run:
+#   python -m pip install -r requirement.txt -r requirements-dev.txt
+# ---------------------------------------------------------------------------
+# pytest>=8.0
+# ruff>=0.6

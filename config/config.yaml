@@ -1,0 +1,78 @@
+# UI-stream testing configuration — no RTSP/IP-camera inputs.
+# Streams are played in the browser test page and pushed back as JPEG frames.
+
+app:
+  host: 0.0.0.0
+  port: 8080
+  log_level: info
+  data_dir: data
+  settings_file: settings.json
+  ingest_token: ${INGEST_TOKEN:-}
+  cors_origins: []
+
+tasks:
+  # Testing project defaults to local tasks; can be changed back to hyperreality.
+  source: static
+  refresh_seconds: 30
+  static_file: examples/tasks.json
+  hyperreality:
+    base_url: ${HR_BASE_URL:-https://stg.hyperreality.app}
+    organization_id: ${HR_ORG_ID:-}
+    project_id: ${HR_PROJECT_ID:-}
+    action_block_id: ${HR_ACTION_BLOCK_ID:-}
+    token: ${HR_TOKEN:-}
+    page_size: 100
+    include_wip: false
+    timeout_seconds: 30
+
+vision:
+  # Set provider: mock for a no-model stream test.
+  provider: openai_compatible   # openai_compatible | mock
+  base_url: ${VLM_BASE_URL:-}
+  api_key: ${VLM_API_KEY:-}
+  model: ${VLM_MODEL:-}
+  temperature: 0.1
+  max_tokens: 500
+  timeout_seconds: 120
+  json_mode: true
+  image_detail: auto
+  max_image_side: 768
+  jpeg_quality: 80
+  mock_complete_after: 3
+  extra_headers: {}
+  extra_body: {}
+
+analysis:
+  interval_seconds: 4
+  settle_seconds: 1
+  startup_grace_seconds: 2
+  frames_per_stream: 1
+  confirmation_votes: 2
+  min_confidence: 0.6
+  cooldown_seconds: 1
+  max_frames_per_request: 8
+  save_evidence: true
+  auto_start: true
+  history_size: 50
+
+prompts:
+  system_file: config/prompts/system.md
+  verify_file: config/prompts/verify_task.md
+
+streams:
+  # All model inputs come from the UI test page / push ingest, not RTSP.
+  - id: cam1
+    name: UI stream 1
+    type: push
+    enabled: true
+    push_timeout_seconds: 10
+  - id: cam2
+    name: UI stream 2
+    type: push
+    enabled: true
+    push_timeout_seconds: 10
+  - id: ui-screen
+    name: UI screen capture
+    type: push
+    enabled: true
+    push_timeout_seconds: 10

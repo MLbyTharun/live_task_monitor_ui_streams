@@ -1,0 +1,32 @@
+[
+  {
+    "id": "demo-1",
+    "title": "Pick up the red block",
+    "description": "The operator picks up the red block from the workbench.",
+    "instructions": "Grasp the red block and lift it clear of the bench surface.",
+    "order": 1,
+    "action_type": "PICK",
+    "expected_time_sec": 20,
+    "success_message": "Red block lifted."
+  },
+  {
+    "id": "demo-2",
+    "title": "Place the red block in the blue bin",
+    "description": "The red block is placed inside the blue bin on the right.",
+    "instructions": "Move the red block over the blue bin and release it inside.",
+    "order": 2,
+    "action_type": "PLACE",
+    "expected_time_sec": 30,
+    "success_message": "Red block is in the blue bin."
+  },
+  {
+    "id": "demo-3",
+    "title": "Press the green start button",
+    "description": "The green start button on the control panel is pressed.",
+    "instructions": "Press and release the green button; the panel light turns on.",
+    "order": 3,
+    "action_type": "PRESS",
+    "expected_time_sec": 10,
+    "success_message": "Green button pressed and panel active."
+  }
+]

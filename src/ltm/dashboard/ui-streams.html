@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UI stream test — Live Task Monitor</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0e1014; --panel:#161920; --line:#2a2f3a; --text:#e9ebf1; --muted:#8a93a6; --accent:#5b8cff; --ok:#3ecf8e; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:var(--text); background:var(--bg); }
+    header { padding:14px 22px; border-bottom:1px solid var(--line); background:var(--panel); }
+    h1 { margin:0; font-size:17px; }
+    main { display:grid; gap:14px; max-width:1400px; margin:0 auto; padding:18px; }
+    .bar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:14px; border:1px solid var(--line); border-radius:14px; background:var(--panel); }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media (max-width:850px) { .grid { grid-template-columns:1fr; } }
+    .card { border:1px solid var(--line); border-radius:14px; background:#0b0d12; overflow:hidden; }
+    .card h2 { margin:0; padding:10px 12px; font-size:12px; color:#c9cfdd; border-bottom:1px solid var(--line); background:var(--panel); }
+    video { width:100%; display:block; aspect-ratio:16/9; background:#000; }
+    button { border:1px solid var(--line); border-radius:9px; padding:9px 12px; font:inherit; font-size:12.5px; font-weight:600; color:var(--text); background:#262c39; cursor:pointer; }
+    button.primary { background:var(--accent); border-color:transparent; color:#fff; }
+    button.ghost { background:transparent; }
+    button.danger { color:#ff9c9c; }
+    label { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12.5px; }
+    input[type="password"] { border:1px solid var(--line); border-radius:9px; padding:8px 10px; background:#10131a; color:var(--text); }
+    .note { color:var(--muted); font-size:12.5px; line-height:1.5; margin:0; }
+    code { color:#b9c8e8; }
+    .hidden { display:none !important; }
+  </style>
+</head>
+<body>
+  <header><h1>UI stream test</h1></header>
+  <main>
+    <div class="bar">
+      <button id="btn-screen" class="primary" type="button">Share screen to ui-screen</button>
+      <button id="btn-stop-screen" class="ghost danger hidden" type="button">Stop screen share</button>
+      <label><input id="capture-streams" type="checkbox" checked /> Send UI streams cam1/cam2 to model</label>
+      <label>Ingest token <input id="ingest-token" type="password" placeholder="optional" autocomplete="off" /></label>
+      <a class="note" href="/" style="color:#b9c8e8;">Main dashboard →</a>
+    </div>
+
+    <p class="note">
+      No RTSP. The two players below are served by this app. This page pushes JPEG screenshots to
+      <code>/api/ingest/cam1</code> and <code>/api/ingest/cam2</code>. <strong>Share screen</strong> uses
+      <code>getDisplayMedia</code> and pushes screenshots of the actual UI screen to
+      <code>/api/ingest/ui-screen</code>. Requires <code>localhost</code> or HTTPS.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <h2>UI stream 1 → cam1</h2>
+        <video id="cam1" src="/streams/cam_a.mp4" autoplay muted loop playsinline controls></video>
+      </div>
+      <div class="card">
+        <h2>UI stream 2 → cam2</h2>
+        <video id="cam2" src="/streams/cam_b.mp4" autoplay muted loop playsinline controls></video>
+      </div>
+      <div class="card hidden" id="screen-card">
+        <h2>Screen capture → ui-screen</h2>
+        <video id="screen-preview" autoplay muted playsinline></video>
+      </div>
+    </div>
+
+    <canvas id="capture-canvas" class="hidden"></canvas>
+  </main>
+  <script src="/ui-streams.js"></script>
+</body>
+</html>

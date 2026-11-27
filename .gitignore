@@ -1,0 +1,14 @@
+# Secrets — never commit
+.env
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Runtime data (state, evidence, demo videos)
+data/*
+!data/.gitkeep

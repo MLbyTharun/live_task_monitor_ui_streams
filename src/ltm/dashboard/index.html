@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Task Monitor</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="conn-dot" id="conn-dot" title="dashboard connection"></span>
+      <h1>Live Task Monitor</h1>
+    </div>
+    <div class="meta">
+      <span class="badge" id="project-badge">no project</span>
+      <span class="badge ghost" id="model-badge">model</span>
+      <span class="badge ghost" id="source-badge">tasks</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel setup-panel">
+      <div class="panel-head">
+        <h2>Project &amp; cameras</h2>
+        <span class="muted small" id="project-status">—</span>
+      </div>
+
+      <div class="setup-row">
+        <label class="field">
+          <span>Project</span>
+          <select id="project-select">
+            <option value="">Loading projects…</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>or paste a project ID</span>
+          <input id="project-manual" type="text" placeholder="project id (manual fallback)" autocomplete="off" />
+        </label>
+        <button id="btn-project-load" class="primary">Load project</button>
+        <button id="btn-project-reload" class="ghost">Reload list</button>
+      </div>
+
+      <div id="project-error" class="errors hidden"></div>
+      <p class="hint">
+        Tasks are loaded for the selected project across all action blocks.
+        Cameras below belong to that project and are saved in
+        <code>data/settings.json</code>.
+      </p>
+    </section>
+
+    <section class="panel task-panel">
+      <div class="panel-head">
+        <h2>Current task</h2>
+        <span class="muted" id="progress-text">—</span>
+      </div>
+
+      <div class="task-body" id="current-task"></div>
+
+      <div class="votes">
+        <span class="label">Confirmation</span>
+        <div class="vote-dots" id="vote-dots"></div>
+        <span class="muted small" id="vote-text"></span>
+      </div>
+
+      <div class="progress-bar" aria-hidden="true">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="next-row">
+        <span class="label">Next</span>
+        <strong id="next-task">—</strong>
+      </div>
+
+      <div class="actions">
+        <button id="btn-analyze" class="primary">Analyze now</button>
+        <button id="btn-refresh" class="ghost">Refresh tasks</button>
+        <button id="btn-complete" class="ghost">Mark complete</button>
+        <button id="btn-reset" class="danger ghost">Reset progress</button>
+      </div>
+
+      <div id="config-errors" class="errors hidden"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Live cameras</h2>
+        <div class="head-actions">
+          <span class="muted" id="stream-count">—</span>
+          <button id="btn-add-camera" class="ghost small">+ Add camera</button>
+        </div>
+      </div>
+      <div id="streams" class="stream-grid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Last analysis</h2>
+        <span class="muted" id="analysis-time"></span>
+      </div>
+      <div id="last-analysis" class="analysis"></div>
+      <div id="history" class="history"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Activity</h2>
+        <span class="muted small">live</span>
+      </div>
+      <ul id="events" class="events"></ul>
+    </section>
+  </main>
+
+  <dialog id="camera-dialog" class="dialog">
+    <form id="camera-form" method="dialog">
+      <div class="dialog-head">
+        <h2 id="camera-dialog-title">Add camera</h2>
+        <button type="button" class="ghost small" id="btn-camera-close">Close</button>
+      </div>
+
+      <div class="form-grid">
+        <label class="field">
+          <span>Name</span>
+          <input id="camera-name" type="text" placeholder="Workbench camera" required />
+        </label>
+        <label class="field">
+          <span>ID</span>
+          <input id="camera-id" type="text" placeholder="cam1" pattern="[A-Za-z0-9_.-]+" />
+        </label>
+        <label class="field">
+          <span>Type</span>
+          <select id="camera-type">
+            <option value="video">video (RTSP / HLS / file / webcam)</option>
+            <option value="push">push (browser / phone / call bridge)</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Frames per second kept</span>
+          <input id="camera-fps" type="number" min="0.1" max="60" step="0.1" value="2" />
+        </label>
+        <label class="field wide" id="camera-url-field">
+          <span>Stream URL</span>
+          <input id="camera-url" type="text" placeholder="rtsp://user:pass@host:554/stream1" autocomplete="off" />
+        </label>
+        <label class="check wide">
+          <input id="camera-enabled" type="checkbox" checked />
+          <span>Enabled — start this camera immediately</span>
+        </label>
+      </div>
+
+      <div id="camera-test-result" class="test-result hidden"></div>
+
+      <div class="dialog-actions">
+        <button type="button" class="ghost" id="btn-camera-test">Test connection</button>
+        <span class="spacer"></span>
+        <button type="button" class="danger ghost" id="btn-camera-delete">Delete</button>
+        <button type="button" class="ghost" id="btn-camera-cancel">Cancel</button>
+        <button type="submit" class="primary" id="btn-camera-save">Save camera</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toasts" class="toasts"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

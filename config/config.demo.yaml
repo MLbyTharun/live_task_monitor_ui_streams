@@ -1,0 +1,45 @@
+# Zero-credential demo: static task list + mock model + two generated videos.
+# Run with:  ltm demo   (or: make demo)
+
+app:
+  host: 127.0.0.1
+  port: 8080
+  log_level: info
+  data_dir: data
+
+tasks:
+  source: static
+  refresh_seconds: 30
+  static_file: examples/tasks.json
+
+vision:
+  provider: mock
+  mock_complete_after: 3
+
+analysis:
+  interval_seconds: 4
+  settle_seconds: 1
+  startup_grace_seconds: 2
+  frames_per_stream: 1
+  confirmation_votes: 2
+  min_confidence: 0.6
+  save_evidence: true
+  auto_start: true
+
+prompts:
+  system_file: config/prompts/system.md
+  verify_file: config/prompts/verify_task.md
+
+streams:
+  - id: cam_a
+    name: Workbench camera
+    type: video
+    url: data/demo/cam_a.mp4
+    fps_limit: 5
+    loop_file: true
+  - id: cam_b
+    name: Overhead camera
+    type: video
+    url: data/demo/cam_b.mp4
+    fps_limit: 5
+    loop_file: true
